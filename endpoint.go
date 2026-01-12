@@ -174,3 +174,25 @@ func EndpointFromRecord(record []string) (*Endpoint, error) {
 		FailAfter:    uint8(failAfter),
 	}, nil
 }
+
+// EndpointFromMap creates a new Endpoint from the given map, which must
+// provide the fields: identifier, url, method, status_online, frequency, fail_after
+func EndpointFromMap(m map[string]string) (*Endpoint, error) {
+	statusOnline, err := strconv.Atoi(m["status_online"])
+	if err != nil {
+		return nil, fmt.Errorf("parse status_online: %v", err)
+	}
+	failAfter, err := strconv.Atoi(m["fail_after"])
+	if err != nil {
+		return nil, fmt.Errorf("parse fail_after: %v", err)
+	}
+	payload := EndpointPayload{
+		Identifier:   m["identifier"],
+		URL:          m["url"],
+		Method:       m["method"],
+		StatusOnline: uint16(statusOnline),
+		Frequency:    m["frequency"],
+		FailAfter:    uint8(failAfter),
+	}
+	return EndpointFromPayload(payload)
+}
